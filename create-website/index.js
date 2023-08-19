@@ -42,7 +42,8 @@ module.exports = async (req, res) => {
         const options = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            body: JSON.stringify(payload),
+            timeout: 120000
         };
 
         const response = await fetch(url, options);
