@@ -10,14 +10,14 @@ create-content and create-logo appwrite function code can be found in the create
 
 create-website appwrite function code can be found in create-website
 
-Payload examples:
+# Payload examples
 
-## create-content:
+## create-content
 ```json
 {"businessName": "Wild Goat Coffee"}
 ```
 
-## create-logo:
+## create-logo
 ```json
 {
 	"businessName": "Wild Goat Coffee"
