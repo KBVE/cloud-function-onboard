@@ -9,15 +9,23 @@ payload:
 
 
 module.exports = async (req, res) => {
+    const payload = JSON.parse(req.payload);
+    if (
+        typeof payload.businessName === "string" &&
+        payload.businessName.trim() !== ""
+    ) {
+        const url = req.variables.url
+        const options = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        };
 
-    const options = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: req.payload
-    };
-
-    const response = await fetch('https://functions.webenclave.com/webhook/436f08c7-bfcd-41b9-935d-d308b11c5218', options);
-    const text = await response.text();
-    res.send(text);
+        const response = await fetch(url, options);
+        const text = await response.text();
+        res.send(text);
+    } else {
+        // Some properties are missing, have incorrect types, or are empty strings
+        res.send("Bad Request", 400);
+    }
 };
-

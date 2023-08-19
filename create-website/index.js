@@ -13,16 +13,33 @@ payload:
 
 
 module.exports = async (req, res) => {
+    const payload = JSON.parse(req.payload);
+    if (
+        typeof payload.businessName === "string" &&
+        payload.businessName.trim() !== "" &&
+        typeof payload.description === "string" &&
+        payload.description.trim() !== "" &&
+        typeof payload.missionStatement === "string" &&
+        payload.missionStatement.trim() !== "" &&
+        typeof payload.location === "string" &&
+        payload.location.trim() !== "" &&
+        typeof payload.services === "string" &&
+        payload.services.trim() !== ""
+    ) {
+        const url = req.variables.url
+        const options = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        };
 
-    const options = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: req.payload
-    };
-
-    const response = await fetch('https://functions.webenclave.com/webhook/decc7b20-e158-4cb9-a3a2-f5b28c594862', options);
-    const text = await response.text();
-    res.send(text);
+        const response = await fetch(url, options);
+        const text = await response.text();
+        res.send(text);
+    } else {
+        // Some properties are missing, have incorrect types, or are empty strings
+        res.send("Bad Request", 400);
+    }
 };
 
 
