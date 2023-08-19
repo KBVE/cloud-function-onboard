@@ -5,26 +5,26 @@ There are a total of three app write functions:
 - create-logo
 - create-website
 
-
+# Function Descriptions
 create-content and create-logo appwrite function code can be found in the create-logo-content folder (they use the same code but different ENV variables (URLs))
 
 create-website appwrite function code can be found in create-website
 
 Payload examples:
 
-create-content:
+## create-content:
 ```json
 {"businessName": "Wild Goat Coffee"}
 ```
 
-create-logo:
+## create-logo:
 ```json
 {
 	"businessName": "Wild Goat Coffee"
 }
 ```
 
-create-website
+## create-website
 ```json
 {
 	"businessName": "Wild Goat Coffee",
@@ -36,7 +36,7 @@ create-website
 }
 ```
 
-ATTENTION: images array is optional. You can completely omit it.
+**ATTENTION: images array is optional. You can completely omit it.**
 Example:
 ```json
 {
