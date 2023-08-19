@@ -47,3 +47,7 @@ Example:
 	"services": "Coffee, Teas, Pastries"
 }
 ```
+
+# Responses
+
+All responses are URLs to a S3 storage and content-type is plaintext. 
