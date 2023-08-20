@@ -41,14 +41,17 @@ module.exports = async (req, res) => {
     // Create a new profile document in the "profiles" collection
     const business = await database.createDocument(
         "rentearth-dev",
-        "Business",
+        "64e1a512f107c97773d2",
         "unique()",
         {
             business_name: businessName,
             business_idea: businessIdea,
             created_at: (new Date(Date.now())).toISOString(),
             created_by: user.email
-        }
+        },
+        [
+            sdk.Permission.read(sdk.Role.user(user.$id))
+        ]
     );
 
     return res.json(business);
