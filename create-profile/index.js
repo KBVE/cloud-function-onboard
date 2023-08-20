@@ -51,7 +51,10 @@ module.exports = async (req, res) => {
             username: username,
             legal_name: legalName,
             created_at: (new Date(Date.now())).toISOString(),
-        }
+        },
+        [
+            Permission.read(Role.user(user.$id))
+        ]
     );
 
     return res.json(profile);
