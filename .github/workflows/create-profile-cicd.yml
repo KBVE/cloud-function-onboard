@@ -22,7 +22,7 @@ jobs:
             -   name: Checkout the code
                 uses: actions/checkout@v2
             -   name: Deploy my function to Appwrite
-                uses: rdmchr/Appwrite-Deploy@v0.1
+                uses: rdmchr/Appwrite-Deploy@master
                 with:
                     endpoint: 'https://ap.kbve.com/v1'
                     project: '6436a6dc9a6b48db802f'
