@@ -1,0 +1,3 @@
+COMMAND="node ." # The command that starts your function
+FUNCID="64dfef4c5ded173294d4" # The id of your function
+CODE="./" # The directory that contains your code
