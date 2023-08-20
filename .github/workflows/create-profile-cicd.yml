@@ -20,11 +20,22 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             -   name: Checkout the code
-                uses: actions/checkout@v2
-            -   name: Deploy my function to Appwrite
-                uses: KBVE/Appwrite-Deploy@master
+                uses: actions/checkout@v3
+            -   name: create-json
+                id: create-json
+                uses: jsdaniell/create-json@1.1.2
                 with:
-                    endpoint: 'https://ap.kbve.com/v1'
-                    project: '6436a6dc9a6b48db802f'
-                    key: ${{ secrets.APPWRITE_API_KEY }}
-                    single: false
+                  name: "appwrite.json"
+                  json: ${{ secrets.APPWRITE_JSON }}
+            -   name: Install Appwrite CLI
+                shell: bash
+                run: curl -sL https://appwrite.io/cli/install.sh | bash
+            -   name: Setup Appwrite CLI
+                shell: bash
+                run: |
+                  appwrite client \
+                    --endpoint='https://ap.kbve.com/v1' \
+                    --projectId='6436a6dc9a6b48db802f' \
+                    --key='${{ secrets.APPWRITE_API }}' \
+                  appwrite -v
+                  appwrite deploy function
