@@ -53,7 +53,7 @@ module.exports = async (req, res) => {
             created_at: (new Date(Date.now())).toISOString(),
         },
         [
-            Permission.read(Role.user(user.$id))
+            sdk.Permission.read(sdk.Role.user(user.$id))
         ]
     );
 
