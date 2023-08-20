@@ -1,7 +1,7 @@
 /*
 {
-    "username": "string",
-    "legalName": "string"
+    "businessName": "string",
+    "businessIdea": "string"
 }
 
 */
@@ -28,13 +28,11 @@ module.exports = async (req, res) => {
     }
 
     const request = JSON.parse(req.payload);
-    const { username, legalName } = request;
-    if (!username || !legalName) {
+    const { businessName, businessIdea } = request;
+    if (!businessName || !businessIdea) {
         res.send("Bad Request", 400);
         return;
     }
-
-
     // Get information about the user who triggered the function
     const userId = req.variables["APPWRITE_FUNCTION_USER_ID"];
 
@@ -42,15 +40,14 @@ module.exports = async (req, res) => {
 
     // Create a new profile document in the "profiles" collection
     const profile = await database.createDocument(
-        "user",
-        "profile",
+        "rentearth-dev",
+        "Business",
         "unique()",
         {
-            user_id: user.$id,
-            email: user.email,
-            username: username,
-            legal_name: legalName,
+            business_name: businessName,
+            business_idea: businessIdea,
             created_at: Date.now(),
+            created_by: user.email
         },
         ["*"]
     );
