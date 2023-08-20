@@ -39,7 +39,7 @@ module.exports = async (req, res) => {
     const user = await users.get(userId);
 
     // Create a new profile document in the "profiles" collection
-    const profile = await database.createDocument(
+    const business = await database.createDocument(
         "rentearth-dev",
         "Business",
         "unique()",
@@ -52,6 +52,6 @@ module.exports = async (req, res) => {
         ["write"]
     );
 
-    return res.json(profile);
+    return res.json(business);
 
 };
