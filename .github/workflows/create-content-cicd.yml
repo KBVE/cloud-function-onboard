@@ -1,0 +1,41 @@
+name: Deploy create-content
+
+on:
+    workflow_dispatch:
+
+permissions:
+    actions: write
+    contents: write
+    pages: write
+    id-token: write
+
+concurrency:
+    group: "pages"
+    cancel-in-progress: true
+
+jobs:
+
+    content:
+        name: Deploy Create Content
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout the code
+                uses: actions/checkout@v3
+            -   name: Install Appwrite CLI
+                shell: bash
+                working-directory: ./create-content
+                run: curl -sL https://appwrite.io/cli/install.sh | bash
+            -   name: Setup Appwrite CLI
+                shell: bash
+                working-directory: ./create-content
+                run: |
+                  appwrite client \
+                    --endpoint='https://ap.kbve.com/v1' \
+                    --projectId='6436a6dc9a6b48db802f' \
+                    --key='${{ secrets.APPWRITE_API }}'
+                  appwrite -v
+                  appwrite functions createDeployment \
+                    --functionId='64e116efe1e76c3ee0a8' \
+                    --entrypoint='index.js' \
+                    --code '.' \
+                    --activate true

@@ -1,0 +1,41 @@
+name: Deploy create-business
+
+on:
+    workflow_dispatch:
+
+permissions:
+    actions: write
+    contents: write
+    pages: write
+    id-token: write
+
+concurrency:
+    group: "pages"
+    cancel-in-progress: true
+
+jobs:
+
+    business:
+        name: Deploy Create Business
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout the code
+                uses: actions/checkout@v3
+            -   name: Install Appwrite CLI
+                shell: bash
+                working-directory: ./create-business
+                run: curl -sL https://appwrite.io/cli/install.sh | bash
+            -   name: Setup Appwrite CLI
+                shell: bash
+                working-directory: ./create-business
+                run: |
+                  appwrite client \
+                    --endpoint='https://ap.kbve.com/v1' \
+                    --projectId='6436a6dc9a6b48db802f' \
+                    --key='${{ secrets.APPWRITE_API }}'
+                  appwrite -v
+                  appwrite functions createDeployment \
+                    --functionId='64e1b87ebadda845d593' \
+                    --entrypoint='index.js' \
+                    --code '.' \
+                    --activate true
