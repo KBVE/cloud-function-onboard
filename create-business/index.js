@@ -46,10 +46,9 @@ module.exports = async (req, res) => {
         {
             business_name: businessName,
             business_idea: businessIdea,
-            created_at: Date.now(),
+            created_at: (new Date(Date.now())).toISOString(),
             created_by: user.email
-        },
-        ["write"]
+        }
     );
 
     return res.json(business);

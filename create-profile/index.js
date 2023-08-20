@@ -50,9 +50,8 @@ module.exports = async (req, res) => {
             email: user.email,
             username: username,
             legal_name: legalName,
-            created_at: Date.now(),
-        },
-        ["write"]
+            created_at: (new Date(Date.now())).toISOString(),
+        }
     );
 
     return res.json(profile);
