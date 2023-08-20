@@ -35,7 +35,7 @@ module.exports = async (req, res) => {
 
     try {
         // Get information about the user who triggered the function
-        const payload = JSON.parse(req.variables["APPWRITE_FUNCTION_EVENT_DATA"]);
+        const payload = JSON.parse(req.variables["APPWRITE_FUNCTION_USER_ID"]);
         console.log('[Payload] -> [START]');
         console.log(payload);
         console.log('[Payload] -> [END]');
