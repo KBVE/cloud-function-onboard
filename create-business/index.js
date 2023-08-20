@@ -49,7 +49,7 @@ module.exports = async (req, res) => {
             created_at: Date.now(),
             created_by: user.email
         },
-        ["any"]
+        ["write"]
     );
 
     return res.json(profile);

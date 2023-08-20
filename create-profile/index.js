@@ -52,7 +52,7 @@ module.exports = async (req, res) => {
             legal_name: legalName,
             created_at: Date.now(),
         },
-        ["any"]
+        ["write"]
     );
 
     return res.json(profile);
