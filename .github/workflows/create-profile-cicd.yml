@@ -27,4 +27,3 @@ jobs:
                     endpoint: 'https://ap.kbve.com/v1'
                     project: '6436a6dc9a6b48db802f'
                     key: ${{ secrets.APPWRITE_API_KEY }}
-                    single: false
