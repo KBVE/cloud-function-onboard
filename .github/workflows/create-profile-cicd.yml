@@ -21,21 +21,27 @@ jobs:
         steps:
             -   name: Checkout the code
                 uses: actions/checkout@v3
-            -   name: create-json
-                id: create-json
-                uses: jsdaniell/create-json@1.1.2
-                with:
-                  name: "appwrite.json"
-                  json: ${{ secrets.APPWRITE_JSON }}
+           
             -   name: Install Appwrite CLI
                 shell: bash
+                working-directory: ./create-profile
                 run: curl -sL https://appwrite.io/cli/install.sh | bash
             -   name: Setup Appwrite CLI
                 shell: bash
+                working-directory: ./create-profile
                 run: |
                   appwrite client \
                     --endpoint='https://ap.kbve.com/v1' \
                     --projectId='6436a6dc9a6b48db802f' \
-                    --key='${{ secrets.APPWRITE_API }}' \
+                    --key='${{ secrets.APPWRITE_API }}'
                   appwrite -v
                   appwrite deploy function
+                  appwrite functions createDeployment \
+                    --functionId='64e1bce0550744f5d108' \
+                    --entrypoint='./index.js' \
+                    --code 'node .' \
+                    --activate true
+#                  appwrite functions createVariable \
+#                    --functionId [FUNCTION_ID]
+#                    --key [KEY]
+#                    --value [VALUE]
