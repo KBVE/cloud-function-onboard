@@ -35,7 +35,6 @@ jobs:
                     --projectId='6436a6dc9a6b48db802f' \
                     --key='${{ secrets.APPWRITE_API }}'
                   appwrite -v
-                  appwrite deploy function
                   appwrite functions createDeployment \
                     --functionId='64e1bce0550744f5d108' \
                     --entrypoint='./index.js' \
