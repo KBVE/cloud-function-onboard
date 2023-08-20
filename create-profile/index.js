@@ -30,7 +30,7 @@ module.exports = async (req, res) => {
     const request = JSON.parse(req.payload);
     const { username, legalName } = request;
     if (!username || !legalName) {
-        res.send("Bad Request", 400);
+        res.json({ error: "Bad Request" }, 400);
         return;
     }
 
@@ -52,7 +52,7 @@ module.exports = async (req, res) => {
             legal_name: legalName,
             created_at: Date.now(),
         },
-        ["*"]
+        ["any"]
     );
 
     return res.json(profile);

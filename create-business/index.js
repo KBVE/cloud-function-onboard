@@ -30,7 +30,7 @@ module.exports = async (req, res) => {
     const request = JSON.parse(req.payload);
     const { businessName, businessIdea } = request;
     if (!businessName || !businessIdea) {
-        res.send("Bad Request", 400);
+        res.json({ error: "Bad Request" }, 400);
         return;
     }
     // Get information about the user who triggered the function
@@ -49,7 +49,7 @@ module.exports = async (req, res) => {
             created_at: Date.now(),
             created_by: user.email
         },
-        ["*"]
+        ["any"]
     );
 
     return res.json(profile);
