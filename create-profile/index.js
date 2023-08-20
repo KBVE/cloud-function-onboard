@@ -36,9 +36,13 @@ module.exports = async (req, res) => {
     try {
         // Get information about the user who triggered the function
         const payload = JSON.parse(req.variables["APPWRITE_FUNCTION_EVENT_DATA"]);
-
+        console.log('[Payload] -> [START]');
+        console.log(payload);
+        console.log('[Payload] -> [END]');
         // Get the user from appwrite
+        console.log('[User] -> [START]');
         const user = await users.get(payload.userId);
+        console.log('[User] -> [END]');
 
         // Create a new profile document in the "profiles" collection
         const profile = await database.createDocument(
