@@ -1,4 +1,4 @@
-name: Deploy create-profile
+name: Deploy create-logo
 
 on:
     workflow_dispatch:
@@ -15,19 +15,19 @@ concurrency:
 
 jobs:
 
-    profile:
-        name: Deploy Profile
+    logo:
+        name: Deploy Create Logo
         runs-on: ubuntu-latest
         steps:
             -   name: Checkout the code
                 uses: actions/checkout@v3
             -   name: Install Appwrite CLI
                 shell: bash
-                working-directory: ./create-profile
+                working-directory: ./create-logo
                 run: curl -sL https://appwrite.io/cli/install.sh | bash
             -   name: Setup Appwrite CLI
                 shell: bash
-                working-directory: ./create-profile
+                working-directory: ./create-logo
                 run: |
                   appwrite client \
                     --endpoint='https://ap.kbve.com/v1' \
@@ -35,7 +35,7 @@ jobs:
                     --key='${{ secrets.APPWRITE_API }}'
                   appwrite -v
                   appwrite functions createDeployment \
-                    --functionId='64e1bce0550744f5d108' \
+                    --functionId='64dfee82eada6467290f' \
                     --entrypoint='index.js' \
                     --code '.' \
                     --activate true
