@@ -37,8 +37,8 @@ jobs:
                   appwrite -v
                   appwrite functions createDeployment \
                     --functionId='64e1bce0550744f5d108' \
-                    --entrypoint='./index.js' \
-                    --code 'node .' \
+                    --entrypoint='index.js' \
+                    --code '.' \
                     --activate true
 #                  appwrite functions createVariable \
 #                    --functionId [FUNCTION_ID]
