@@ -40,6 +40,20 @@ module.exports = async (req, res) => {
 
     const user = await users.get(userId);
 
+    const { documents } = await database.listDocuments("user", "profile", [sdk.Query.equal("user_id", userId)]);
+
+    if (documents.length > 0) {
+        res.json({ error: "Already have a profile!" }, 400);
+        return;
+    }
+
+    const { _documents } = await database.listDocuments("user", "profile", [sdk.Query.equal("username", username)]);
+    if (documents.length > 0) {
+        res.json({ error: "Username is taken" }, 400);
+        return;
+    }
+
+
     // Create a new profile document in the "profiles" collection
     const profile = await database.createDocument(
         "user",
