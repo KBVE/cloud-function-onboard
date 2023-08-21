@@ -9,6 +9,7 @@
 
 
 const sdk = require("node-appwrite");
+const axios = require('axios');
 
 module.exports = async (req, res) => {
     const client = new sdk.Client();
@@ -37,14 +38,12 @@ module.exports = async (req, res) => {
 
     const url = req.variables.url
     const options = {
-        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(request),
-        signal: AbortSignal.timeout(60000 * 15)
+        timeout: 1800000 // 30 minutes
     };
 
-    const response = await fetch(url, options);
-    const text = await response.text();
+    const response = await axios.post(url, request, options);
+    const text = response.data;
 
 
     // Get information about the user who triggered the function
