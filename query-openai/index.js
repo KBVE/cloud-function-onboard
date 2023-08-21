@@ -2,29 +2,18 @@
 payload:
 
 {
-    "businessName": "Web Enclave",
-    "description": "Web Enclave is a forward-thinking consultancy specializing in comprehensive software solutions. With a proven track record, we've successfully developed a myriad of applications catering to diverse industries including aviation, chemical, and beyond.",
-    "missionStatement": "At Web Enclave, our unwavering commitment lies in sculpting unparalleled software solutions that catalyze businesses and individuals in the digital domain. We pledge to conceive groundbreaking, user-centric, and dependable software that seamlessly transforms concepts into tangible realities.",
-    "location": "Detroit, MI, USA",
-    "services": "Elevating businesses through our expertise in Custom Software Development, Web Applications, Mobile Apps, and invaluable Software Consulting."
-    "images": ["https://storageapi.webenclave.com/hackathon/1692429874431.png", "https://storageapi.webenclave.com/hackathon/1692430527112.png", "https://storageapi.webenclave.com/hackathon/1692430574612.png", "https://storageapi.webenclave.com/hackathon/1692464910504.png", "https://storageapi.webenclave.com/hackathon/1692464973975.png", "https://storageapi.webenclave.com/hackathon/1692465242332.png"]
-    "businessId": "5f9b3b5b5f9b3b5b5f9b3b5b"
+    "Action" : Stringify
+    "Username" : String
+      https://n8n.kbve.com/webhook/ // /cache/:action/:username
+
 }
 
-ATTENTION: the images array is optional. You can completely omit it.
-Example:
-{
-    "businessName": "Web Enclave",
-    "description": "Web Enclave is a forward-thinking consultancy specializing in comprehensive software solutions. With a proven track record, we've successfully developed a myriad of applications catering to diverse industries including aviation, chemical, and beyond.",
-    "missionStatement": "At Web Enclave, our unwavering commitment lies in sculpting unparalleled software solutions that catalyze businesses and individuals in the digital domain. We pledge to conceive groundbreaking, user-centric, and dependable software that seamlessly transforms concepts into tangible realities.",
-    "location": "Detroit, MI, USA",
-    "services": "Elevating businesses through our expertise in Custom Software Development, Web Applications, Mobile Apps, and invaluable Software Consulting."
-    "businessId": "5f9b3b5b5f9b3b5b5f9b3b5b"
-}
 
 
 */
 const sdk = require("node-appwrite");
+const axios = require("axios").default;
+
 
 module.exports = async (req, res) => {
     const client = new sdk.Client();
@@ -33,7 +22,8 @@ module.exports = async (req, res) => {
     if (
         !req.variables["APPWRITE_FUNCTION_ENDPOINT"] ||
         !req.variables["APPWRITE_FUNCTION_API_KEY"] ||
-        !req.variables["APPWRITE_FUNCTION_PROJECT_ID"]
+        !req.variables["APPWRITE_FUNCTION_PROJECT_ID"] ||
+        !req.variables["OPENAI_KEY"]
     ) {
         console.warn("Environment variables are not set. Function cannot use Appwrite SDK.");
     } else {
@@ -62,9 +52,9 @@ module.exports = async (req, res) => {
     const user = await users.get(userId);
 
     // Create a new profile document in the "profiles" collection
-    const logo = await database.createDocument(
+    const oepn_data = await database.createDocument(
         "rentearth-dev",
-        "64e1a579795c4e20bd70",
+        "openai_data",
         "unique()",
         {
             url: text,
@@ -77,7 +67,7 @@ module.exports = async (req, res) => {
         ]
     );
 
-    return res.json(logo);
+    return res.json(oepn_data);
 };
 
 
