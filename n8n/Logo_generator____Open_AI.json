@@ -1,0 +1,368 @@
+{
+  "name": "Logo generator -- Open AI",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ai-hackathon-create-logo",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "8287a5ca-8576-4b32-8065-72f35ec77bf1",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        560,
+        320
+      ],
+      "webhookId": "436f08c7-bfcd-41b9-935d-d308b11c5218"
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "prompt": {
+          "messages": [
+            {
+              "role": "system",
+              "content": "Only respond with one unique business logo description to give to an artist based on the prompt. They should be creative, unique, contain no more than four colors, not contain any words or characters, simplistic elements, and applicable to a business branding."
+            },
+            {
+              "content": "={{$json.body.businessName}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d870881e-fa9c-4905-907f-6f441eb97cd9",
+      "name": "OpenAI",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [
+        800,
+        540
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "yyf3goM4Ts9glvG8",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "prompt": "={{ $json.message.content }}",
+        "options": {
+          "n": 4,
+          "size": "256x256"
+        }
+      },
+      "id": "5a9bb7da-9cfa-4270-a0b0-bb9cc38a8f03",
+      "name": "OpenAI1",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        520
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "yyf3goM4Ts9glvG8",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "fileName",
+              "value": "={{ Date.now() * Math.floor(Math.random() * 100) }}.png"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "778a93e0-e88d-4f9a-acb5-a3ab73c36d43",
+      "name": "Set",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        1220,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upload",
+        "bucketName": "hackathon",
+        "fileName": "={{ $json.fileName }}",
+        "additionalFields": {}
+      },
+      "id": "c9fd6836-9465-4e18-ab8d-62ab6a7d99ae",
+      "name": "S3",
+      "type": "n8n-nodes-base.s3",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        320
+      ],
+      "credentials": {
+        "s3": {
+          "id": "2",
+          "name": "S3 account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.fileName }}",
+        "options": {}
+      },
+      "id": "cdd2fa4b-e4b2-4318-b925-a9f1d4810a98",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1840,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "fileName",
+              "value": "=https://storageapi.webenclave.com/hackathon/{{ $('Set').item.json.fileName }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "318e7fb3-24e0-400d-9ec5-44e5223fd5ea",
+      "name": "Set1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        1620,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "concatenateItems",
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "fileName"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "071fae4d-a5ee-4fce-a273-430f8a25e9ab",
+      "name": "Item Lists",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 3,
+      "position": [
+        1880,
+        580
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.body.businessName }}",
+              "operation": "isEmpty"
+            }
+          ]
+        }
+      },
+      "id": "47e9a51c-bf31-4d42-b8af-884c53faccfd",
+      "name": "IF",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        780,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "noData",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "951ee1eb-14d7-4b5a-8ee8-2bce88856cc7",
+      "name": "Respond to Webhook1",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1020,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://salty-oranges-move.loca.lt/predict",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "input",
+              "value": "={{ $json.body.businessName }} Logo "
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a598b083-ee5b-450e-a362-e4e8a5b6c07c",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1000,
+        320
+      ]
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "functions.webenclave.com",
+            "user-agent": "Insomnia/2023.5.2",
+            "content-length": "39",
+            "accept": "*/*",
+            "content-type": "application/json",
+            "x-forwarded-for": "71.82.67.90",
+            "x-forwarded-host": "functions.webenclave.com",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "87d60f505549",
+            "x-real-ip": "71.82.67.90",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "businessName": "wild goat coffee"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "OpenAI": [
+      {
+        "json": {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "A playful, mischievous goat with vibrant, multi-colored swirls of steam rising from a coffee cup held in its hoof, showcasing the energetic and lively spirit of Wild Goat Coffee."
+          },
+          "finish_reason": "stop"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "IF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set": {
+      "main": [
+        [
+          {
+            "node": "S3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S3": {
+      "main": [
+        [
+          {
+            "node": "Set1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a9a37ed9-acce-4506-a2c6-4f1f4bb2da9f",
+  "id": "6UOXWJPOVSEIEzul",
+  "meta": {
+    "instanceId": "c6595d1af64558f387ff52f97fe4a36d0569860f61bd602d73a4fe44b9bdad45"
+  },
+  "tags": []
+}

@@ -1,0 +1,392 @@
+{
+  "name": "Website Generator -- OpenAI",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ai-hackathon-create-website",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "c705b9fa-7e14-4c54-9693-2d2c55402aca",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        760,
+        440
+      ],
+      "webhookId": "decc7b20-e158-4cb9-a3a2-f5b28c594862"
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "prompt": {
+          "messages": [
+            {
+              "role": "system",
+              "content": "=I will generate a one page professional static site with html and tailwind for a new business. I will include these images: {{ $json.body.images }}. I will expand upon the information provided to add content. I will only respond with HTML. "
+            },
+            {
+              "content": "=The business name is {{ $json.body.businessName }}. The business description is: {{ $json.body.description }}. The business is located in: {{ $json.body.location }}. The mission statement is: {{ $json.body.missionStatement }}. The services we offer are: {{ $json.body.services }}."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "614708f4-5e12-465a-9e46-2b42ce0c319b",
+      "name": "OpenAI",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [
+        980,
+        500
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "yyf3goM4Ts9glvG8",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upload",
+        "bucketName": "hackathon",
+        "fileName": "={{ $json.fileName }}",
+        "binaryData": false,
+        "fileContent": "={{ $json.html }}",
+        "additionalFields": {}
+      },
+      "id": "4763a00f-176e-4d6c-b730-cebb76264406",
+      "name": "S3",
+      "type": "n8n-nodes-base.s3",
+      "typeVersion": 1,
+      "position": [
+        2000,
+        420
+      ],
+      "credentials": {
+        "s3": {
+          "id": "2",
+          "name": "S3 account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "html": "  {{ $json.message.content }}"
+      },
+      "id": "73f4fd24-7973-4952-b732-2df470609b67",
+      "name": "HTML",
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1,
+      "position": [
+        1620,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "=https://storageapi.webenclave.com/hackathon/{{ $('Set').item.json.fileName }}",
+        "options": {}
+      },
+      "id": "d7ce39fd-2ee6-4cc6-9b7c-c64f542e0fc6",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "fileName",
+              "value": "={{ Date.now() }}.html"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b02a6b01-97a9-41cd-929f-4a2774b2ce0b",
+      "name": "Set",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        1820,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.body.businessName }}",
+              "operation": "isEmpty"
+            },
+            {
+              "value1": "={{ $json.body.missionStatement }}",
+              "operation": "isEmpty"
+            },
+            {
+              "value1": "={{ $json.body.location }}",
+              "operation": "isEmpty"
+            },
+            {
+              "value1": "={{ $json.body.services }}",
+              "operation": "isEmpty"
+            },
+            {
+              "value1": "description",
+              "operation": "isEmpty"
+            }
+          ]
+        },
+        "combineOperation": "any"
+      },
+      "id": "f010f8cc-7d50-4a5d-959d-2bd97fb5aeb2",
+      "name": "IF",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "30e1dcae-3452-4b5b-b497-c1dfb9347ab7",
+      "name": "Bad Request",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1220,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "prompt": {
+          "messages": [
+            {
+              "role": "system",
+              "content": "I will be given HTML content and I will expand upon the information in the site. I will not provide new images. I will respond with only HTML."
+            },
+            {
+              "content": "={{ $json.message.content }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e6fce989-be17-4c78-b239-ec7de35ab0e5",
+      "name": "OpenAI1",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [
+        1160,
+        620
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "yyf3goM4Ts9glvG8",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "prompt": {
+          "messages": [
+            {
+              "role": "system",
+              "content": "I will be given HTML. I will make sure the style of the website is professional and appealing for the end user. I will only respond back with HTML."
+            },
+            {
+              "content": "={{ $json.message.content }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0bd63a6a-ebdd-4e12-88e6-d578c65a93df",
+      "name": "OpenAI2",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        620
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "yyf3goM4Ts9glvG8",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Set": [
+      {
+        "json": {
+          "html": "  <!DOCTYPE html>\n<html lang=\"en\">\n\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\n    <title>Vacuum World</title>\n    <link href=\"https://cdn.jsdelivr.net/npm/tailwindcss@2.0.1/dist/tailwind.min.css\" rel=\"stylesheet\">\n</head>\n\n<body class=\"bg-gray-100\">\n    <header class=\"bg-purple-600 text-white py-4\">\n        <div class=\"container mx-auto px-4\">\n            <h1 class=\"text-4xl font-bold\">Vacuum World</h1>\n            <h2 class=\"text-lg\">Detroit, Michigan</h2>\n        </div>\n    </header>\n\n    <section class=\"container mx-auto py-8\">\n        <h2 class=\"text-2xl font-bold mb-4\">About Us</h2>\n        <p>We are Vacuum World, a company dedicated to providing high-quality vacuums that truly suck! With our range of\n            products and services, we ensure your cleaning needs are met efficiently and effectively.</p>\n    </section>\n\n    <section class=\"container mx-auto py-8\">\n        <h2 class=\"text-2xl font-bold mb-4\">Our Mission</h2>\n        <p class=\"mb-4\">At Vacuum World, our mission is to provide you with the best vacuum solutions available. We\n            strive to deliver exceptional customer service and help you find the perfect vacuum that meets your specific\n            needs.</p>\n        <img src=\"https://placehold.jp/3d4070/ffffff/300x300.png?css=%7B%22border-radius%22%3A%2215px%22%7D\" alt=\"Vacuum\"\n            class=\"rounded-lg\">\n    </section>\n\n    <section class=\"bg-gray-200 py-8\">\n        <div class=\"container mx-auto\">\n            <h2 class=\"text-2xl font-bold mb-4\">Our Services</h2>\n            <div class=\"grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6\">\n                <div class=\"bg-white shadow-lg rounded-lg p-6\">\n                    <h3 class=\"text-xl font-bold mb-2\">Re-chord</h3>\n                    <p>Our experts can re-chord the power cords of your vacuums, ensuring optimal performance and safety.\n                    </p>\n                </div>\n                <div class=\"bg-white shadow-lg rounded-lg p-6\">\n                    <h3 class=\"text-xl font-bold mb-2\">Belt Exchange</h3>\n                    <p>We offer belt exchange services to keep your vacuums running smoothly and efficiently.</p>\n                </div>\n                <div class=\"bg-white shadow-lg rounded-lg p-6\">\n                    <h3 class=\"text-xl font-bold mb-2\">De-clog</h3>\n                    <p>If your vacuum gets clogged, our professionals can help you get it back to peak performance.</p>\n                </div>\n            </div>\n        </div>\n    </section>\n</body>\n\n</html>",
+          "fileName": "1692244593016.html"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "functions.webenclave.com",
+            "user-agent": "Insomnia/2023.5.2",
+            "content-length": "983",
+            "accept": "*/*",
+            "content-type": "application/json",
+            "x-forwarded-for": "71.82.67.90",
+            "x-forwarded-host": "functions.webenclave.com",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "87d60f505549",
+            "x-real-ip": "71.82.67.90",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "businessName": "Wild Goat Coffee",
+            "description": "Wild Goat Coffee is a botique coffee shop that offers the highest quality beans to wake you up in the morning and keep your day going strong. We offer a very laid back atmosphere and we host poetry nights every Saturday. Come in, drink good coffee, and become crazy",
+            "missionStatement": "At Wild Goat Coffee our mission is for your to become crazy hyped up on caffeiene. When you leave our coffee shop, you will be all jacked up on espresso shots.",
+            "location": "Detroit, MI, USA",
+            "services": "Coffee, Teas, Pastries",
+            "images": [
+              "https://storageapi.webenclave.com/hackathon/1692429874431.png",
+              "https://storageapi.webenclave.com/hackathon/1692430527112.png",
+              "https://storageapi.webenclave.com/hackathon/1692430574612.png",
+              "https://storageapi.webenclave.com/hackathon/1692464910504.png",
+              "https://storageapi.webenclave.com/hackathon/1692464973975.png",
+              "https://storageapi.webenclave.com/hackathon/1692465242332.png"
+            ]
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "HTML": [
+      {
+        "json": {
+          "html": "  <!DOCTYPE html>\n<html lang=\"en\">\n\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Wild Goat Coffee</title>\n    <link href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css\" rel=\"stylesheet\">\n    <style>\n        body {\n            background-color: #f8f8f8;\n        }\n\n        header {\n            background-color: #fff;\n            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);\n            padding: 20px;\n        }\n\n        h1 {\n            font-size: 32px;\n            font-weight: bold;\n            color: #333;\n        }\n\n        p {\n            font-size: 16px;\n            color: #666;\n        }\n\n        section {\n            padding: 40px 0;\n        }\n\n        img {\n            width: 100%;\n            max-width: 400px;\n            height: auto;\n            border-radius: 8px;\n        }\n\n        h2 {\n            font-size: 24px;\n            font-weight: bold;\n            color: #333;\n            margin-bottom: 20px;\n        }\n\n        h3 {\n            font-size: 20px;\n            font-weight: bold;\n            color: #333;\n            margin-bottom: 10px;\n        }\n\n        .description {\n            font-size: 16px;\n            color: #666;\n            margin-bottom: 20px;\n        }\n\n        .contact-card img {\n            width: 100%;\n            max-width: 200px;\n            height: auto;\n            margin-bottom: 20px;\n        }\n\n        .contact-card p {\n            margin-bottom: 10px;\n        }\n\n        footer {\n            background-color: #333;\n            padding: 20px;\n        }\n\n        footer p {\n            font-size: 14px;\n            color: #fff;\n            margin: 0;\n        }\n    </style>\n</head>\n\n<body>\n\n    <!-- Header -->\n    <header>\n        <div class=\"container\">\n            <h1>Wild Goat Coffee</h1>\n            <p>Boutique coffee shop in Detroit, MI, USA</p>\n        </div>\n    </header>\n\n    <!-- About Section -->\n    <section>\n        <div class=\"container\">\n            <div class=\"row\">\n                <div class=\"col-lg-6\">\n                    <img src=\"https://storageapi.webenclave.com/hackathon/1692429874431.png\" alt=\"Wild Goat Coffee\">\n                </div>\n                <div class=\"col-lg-6\">\n                    <h2>About Us</h2>\n                    <p>\n                        Wild Goat Coffee is a boutique coffee shop located in the heart of Detroit, Michigan. We pride ourselves on offering the highest quality beans sourced from around the world. Our coffee is carefully crafted to provide the perfect balance of flavors and aromas to awaken your senses and keep you going throughout the day. In addition to our exceptional coffee, we also provide a laid-back atmosphere where you can relax, socialize, and enjoy the company of fellow coffee enthusiasts. Join us every Saturday for our popular poetry nights. At Wild Goat Coffee, we believe that a great cup of coffee has the power to inspire and connect people, and we invite you to be a part of our coffee community. Come in, drink good coffee, and let yourself go wild with flavor and creativity.\n                    </p>\n                </div>\n            </div>\n        </div>\n    </section>\n\n    <!-- Services Section -->\n    <section class=\"bg-gray-100\">\n        <div class=\"container\">\n            <h2 class=\"text-center\">Our Services</h2>\n            <div class=\"row\">\n                <div class=\"col-md-4\">\n                    <img src=\"https://storageapi.webenclave.com/hackathon/1692430527112.png\" alt=\"Coffee\" class=\"mx-auto d-block\">\n                    <h3>Coffee</h3>\n                    <p class=\"description\">Indulge in our specialty coffees made with freshly roasted beans that are ground and brewed to perfection. From rich espresso shots to smooth lattes and cappuccinos, we have a wide selection of coffee options to satisfy your caffeine cravings.</p>\n                </div>\n                <div class=\"col-md-4\">\n                    <img src=\"https://storageapi.webenclave.com/hackathon/1692430574612.png\" alt=\"Teas\" class=\"mx-auto d-block\">\n                    <h3>Teas</h3>\n                    <p class=\"description\">Experience the soothing and refreshing flavors of our artisanal teas. Whether you prefer classic black tea, invigorating green tea, or herbal blends, we have a diverse selection of teas that will delight your taste buds and relax your mind.</p>\n                </div>\n                <div class=\"col-md-4\">\n                    <img src=\"https://storageapi.webenclave.com/hackathon/1692464910504.png\" alt=\"Pastries\" class=\"mx-auto d-block\">\n                    <h3>Pastries</h3>\n                    <p class=\"description\">Complement your coffee or tea with our freshly baked pastries and treats. From flaky croissants to decadent cakes and cookies, our selection of pastries is made with love and the highest quality ingredients, ensuring a delightful indulgence with every bite.</p>\n                </div>\n            </div>\n        </div>\n    </section>\n\n    <!-- Mission Statement Section -->\n    <section>\n        <div class=\"container\">\n            <div class=\"row\">\n                <div class=\"col-lg-6\">\n                    <img src=\"https://storageapi.webenclave.com/hackathon/1692464973975.png\" alt=\"Mission Statement\">\n                </div>\n                <div class=\"col-lg-6\">\n                    <h2>Our Mission</h2>\n                    <p>\n                        At Wild Goat Coffee, our mission is to provide you with an unparalleled coffee experience that leaves you buzzing with excitement. We strive to create a space where coffee lovers can indulge their passion for exceptional brews, explore new flavors, and connect with like-minded individuals. Through our dedication to sourcing the finest beans, mastering the art of coffee preparation, and fostering a warm and welcoming environment, we aim to ignite your senses and inspire your taste for adventure. When you leave our coffee shop, we want you to feel energized, uplifted, and ready to conquer the world, one sip at a time.\n                    </p>\n                </div>\n            </div>\n        </div>\n    </section>\n\n    <!-- Contact Section -->\n    <section class=\"bg-gray-100\">\n        <div class=\"container\">\n            <h2 class=\"text-center\">Contact Us</h2>\n            <div class=\"row\">\n                <div class=\"col-md-4\">\n                    <img src=\"https://storageapi.webenclave.com/hackathon/1692465242332.png\" alt=\"Contact Us\" class=\"mx-auto d-block\">\n                </div>\n                <div class=\"col-md-8\">\n                    <p class=\"text-center\"><strong>Visit Us</strong></p>\n                    <p class=\"text-center\">Location: Detroit, MI, USA</p>\n                    <p class=\"text-center\">Phone: 123-456-7890</p>\n                    <p class=\"text-center\">Email: info@wildgoatcoffee.com</p>\n                    <p class=\"text-center\">Hours: Monday - Friday: 7am - 6pm, Saturday: 8am - 10pm, Sunday: Closed</p>\n                </div>\n            </div>\n        </div>\n    </section>\n\n    <!-- Footer -->\n    <footer>\n        <div class=\"container\">\n            <p class=\"text-center\">&copy; 2022 Wild Goat Coffee. All rights reserved.</p>\n        </div>\n    </footer>\n\n</body>\n\n</html>"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "Set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S3": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set": {
+      "main": [
+        [
+          {
+            "node": "S3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF": {
+      "main": [
+        [
+          {
+            "node": "Bad Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "OpenAI2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a3606dfe-3e42-424d-bea3-fd2e09536e09",
+  "id": "hblPNmGjSt1qhxek",
+  "meta": {
+    "instanceId": "c6595d1af64558f387ff52f97fe4a36d0569860f61bd602d73a4fe44b9bdad45"
+  },
+  "tags": []
+}

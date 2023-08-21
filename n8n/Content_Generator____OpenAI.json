@@ -1,0 +1,346 @@
+{
+  "name": "Content Generator -- OpenAI",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ai-hackathon-generate-related-graphical-content",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "1041fc24-ab4d-4a36-b361-cd8aa4022033",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        820,
+        360
+      ],
+      "webhookId": "f569e112-b83b-4def-8edf-ad6966005fa0"
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "prompt": {
+          "messages": [
+            {
+              "role": "system",
+              "content": "The user will provide a business name and I will decide what art style best suites it. I must pick one of these art styles: \"None\", \"cinematic-default\", \"sai-3d-model\", \"sai-analog film\", \"sai-anime\", \"sai-cinematic\", \"sai-comic book\", \"sai-craft clay\", \"sai-digital art\", \"sai-enhance\", \"sai-fantasy art\", \"sai-isometric\", \"sai-line art\", \"sai-lowpoly\", \"sai-neonpunk\", \"sai-origami\", \"sai-photographic\", \"sai-pixel art\", \"sai-texture\", \"ads-advertising\", \"ads-automotive\", \"ads-corporate\", \"ads-fashion editorial\", \"ads-food photography\", \"ads-luxury\", \"ads-real estate\", \"ads-retail\", \"artstyle-abstract\", \"artstyle-abstract expressionism\", \"artstyle-art deco\", \"artstyle-art nouveau\", \"artstyle-constructivist\", \"artstyle-cubist\", \"artstyle-expressionist\", \"artstyle-graffiti\", \"artstyle-hyperrealism\", \"artstyle-impressionist\", \"artstyle-pointillism\", \"artstyle-pop art\", \"artstyle-psychedelic\", \"artstyle-renaissance\", \"artstyle-steampunk\", \"artstyle-surrealist\", \"artstyle-typography\", \"artstyle-watercolor\", \"futuristic-biomechanical\", \"futuristic-biomechanical cyberpunk\", \"futuristic-cybernetic\", \"futuristic-cybernetic robot\", \"futuristic-cyberpunk cityscape\", \"futuristic-futuristic\", \"futuristic-retro cyberpunk\", \"futuristic-retro futurism\", \"futuristic-sci-fi\", \"futuristic-vaporwave\", \"game-bubble bobble\", \"game-cyberpunk game\", \"game-fighting game\", \"game-gta\", \"game-mario\", \"game-minecraft\", \"game-pokemon\", \"game-retro arcade\", \"game-retro game\", \"game-rpg fantasy game\", \"game-strategy game\", \"game-streetfighter\", \"game-zelda\", \"misc-architectural\", \"misc-disco\", \"misc-dreamscape\", \"misc-dystopian\", \"misc-fairy tale\", \"misc-gothic\", \"misc-grunge\", \"misc-horror\", \"misc-kawaii\", \"misc-lovecraftian\", \"misc-macabre\", \"misc-manga\", \"misc-metropolis\", \"misc-minimalist\", \"misc-monochrome\", \"misc-nautical\", \"misc-space\", \"misc-stained glass\", \"misc-techwear fashion\", \"misc-tribal\", \"misc-zentangle\", \"papercraft-collage\", \"papercraft-flat papercut\", \"papercraft-kirigami\", \"papercraft-paper mache\", \"papercraft-paper quilling\", \"papercraft-papercut collage\", \"papercraft-papercut shadow box\", \"papercraft-stacked papercut\", \"papercraft-thick layered papercut\", \"photo-alien\", \"photo-film noir\", \"photo-hdr\", \"photo-long exposure\", \"photo-neon noir\", \"photo-silhouette\", \"photo-tilt-shift\"  Return in this format: {\"business\": \"\", \"artStyle\": \"\"}"
+            },
+            {
+              "content": "={{ $json.body.businessName }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "cc65837d-a8d0-4656-8779-bc85d5cedbc6",
+      "name": "OpenAI",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        360
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "yyf3goM4Ts9glvG8",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "input",
+              "value": "={{ JSON.parse($json.message.content) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f611246c-1d89-4f73-97e5-a29ba2c21e23",
+      "name": "Set",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        1240,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "None cinematic-default sai-3d-model sai-analog film sai-anime sai-cinematic sai-comic book sai-craft clay sai-digital art sai-enhance sai-fantasy art sai-isometric sai-line art sai-lowpoly sai-neonpunk sai-origami sai-photographic sai-pixel art sai-texture ads-advertising ads-automotive ads-corporate ads-fashion editorial ads-food photography ads-luxury ads-real estate ads-retail artstyle-abstract artstyle-abstract expressionism artstyle-art deco artstyle-art nouveau artstyle-constructivist artstyle-cubist artstyle-expressionist artstyle-graffiti artstyle-hyperrealism artstyle-impressionist artstyle-pointillism artstyle-pop art artstyle-psychedelic artstyle-renaissance artstyle-steampunk artstyle-surrealist artstyle-typography artstyle-watercolor futuristic-biomechanical futuristic-biomechanical cyberpunk futuristic-cybernetic futuristic-cybernetic robot futuristic-cyberpunk cityscape futuristic-futuristic futuristic-retro cyberpunk futuristic-retro futurism futuristic-sci-fi futuristic-vaporwave game-bubble bobble game-cyberpunk game game-fighting game game-gta game-mario game-minecraft game-pokemon game-retro arcade game-retro game game-rpg fantasy game game-strategy game game-streetfighter game-zelda misc-architectural misc-disco misc-dreamscape misc-dystopian misc-fairy tale misc-gothic misc-grunge misc-horror misc-kawaii misc-lovecraftian misc-macabre misc-manga misc-metropolis misc-minimalist misc-monochrome misc-nautical misc-space misc-stained glass misc-techwear fashion misc-tribal misc-zentangle papercraft-collage papercraft-flat papercut papercraft-kirigami papercraft-paper mache papercraft-paper quilling papercraft-papercut collage papercraft-papercut shadow box papercraft-stacked papercut papercraft-thick layered papercut photo-alien photo-film noir photo-hdr photo-long exposure photo-neon noir photo-silhouette photo-tilt-shift",
+              "operation": "contains",
+              "value2": "={{ $json.input.artStyle }}"
+            }
+          ]
+        }
+      },
+      "id": "260755e8-4ee9-4aff-8aae-4ee670953087",
+      "name": "IF",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1460,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://cold-otters-raise.loca.lt/predict",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.input) }}",
+        "options": {}
+      },
+      "id": "50d9872a-14af-4fd1-9dfd-9abbbafb520e",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1680,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "noData",
+        "options": {
+          "responseCode": 503
+        }
+      },
+      "id": "a905c611-6b64-4148-a4ce-449c8bb9ab22",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1700,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "fileName",
+              "value": "={{Date.now()}}.png"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a6a4fedf-6386-464b-9631-6b538574e5c7",
+      "name": "Set1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        1960,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upload",
+        "bucketName": "hackathon",
+        "fileName": "={{ $json.fileName }}",
+        "additionalFields": {}
+      },
+      "id": "96491649-6896-4804-8c05-3bd1d5d89e11",
+      "name": "S3",
+      "type": "n8n-nodes-base.s3",
+      "typeVersion": 1,
+      "position": [
+        2180,
+        200
+      ],
+      "credentials": {
+        "s3": {
+          "id": "2",
+          "name": "S3 account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.file }}",
+        "options": {}
+      },
+      "id": "f1547cde-fe38-4408-a1dd-d0dc8e5cbf08",
+      "name": "Respond to Webhook1",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        2640,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "file",
+              "value": "=https://storageapi.webenclave.com/hackathon/{{ $('Set1').item.json.fileName }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e2114a98-532d-4f19-91e1-5e87ccb104d3",
+      "name": "Set2",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        2400,
+        200
+      ]
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "functions.webenclave.com",
+            "user-agent": "Insomnia/2023.5.5",
+            "content-length": "31",
+            "accept": "*/*",
+            "content-type": "application/json",
+            "x-forwarded-for": "71.82.67.90",
+            "x-forwarded-host": "functions.webenclave.com",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "87d60f505549",
+            "x-real-ip": "71.82.67.90",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "businessName": "Web Enclave"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set": {
+      "main": [
+        [
+          {
+            "node": "IF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Set1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set1": {
+      "main": [
+        [
+          {
+            "node": "S3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S3": {
+      "main": [
+        [
+          {
+            "node": "Set2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set2": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4f6145da-131a-4e28-a550-16993fcf3bdf",
+  "id": "7PUaloTOk7gOcaXn",
+  "meta": {
+    "instanceId": "c6595d1af64558f387ff52f97fe4a36d0569860f61bd602d73a4fe44b9bdad45"
+  },
+  "tags": []
+}

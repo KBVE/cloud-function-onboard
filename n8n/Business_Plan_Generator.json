@@ -1,0 +1,252 @@
+{
+  "name": "Business Plan Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ai-hackathon-create-business-plan",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "8cad8433-2d49-44c3-972b-a8b2fdc06b79",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        820,
+        360
+      ],
+      "webhookId": "281f8d3d-2939-4101-af76-6ea6dd804317"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "51.161.5.226:9090/document/text",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "={{ $json.body.businessIdea }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3800f34c-a547-4dbf-869f-c63a8b457ce4",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1020,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "fileName",
+              "value": "={{Date.now()}}.html"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3a916713-6e0e-419e-b6ca-f99dafaa106c",
+      "name": "Set",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        1420,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upload",
+        "bucketName": "hackathon",
+        "fileName": "={{ $json.fileName }}",
+        "binaryData": false,
+        "fileContent": "={{ $json.data }}",
+        "additionalFields": {}
+      },
+      "id": "3f9aafde-4729-4f4e-9d6e-4262459232c4",
+      "name": "S3",
+      "type": "n8n-nodes-base.s3",
+      "typeVersion": 1,
+      "position": [
+        1620,
+        360
+      ],
+      "credentials": {
+        "s3": {
+          "id": "2",
+          "name": "S3 account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "url",
+              "value": "=https://storageapi.webenclave.com/hackathon/{{ $('Set').item.json.fileName }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e7272193-fb04-4834-b56c-2f7e47ce56a7",
+      "name": "Set1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        1800,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.url }}",
+        "options": {}
+      },
+      "id": "2c8550e8-acf2-4134-abdb-a7767fe48f26",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1940,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "markdownToHtml",
+        "markdown": "={{ $json.data }}",
+        "options": {}
+      },
+      "id": "edab2a57-0359-4159-9f10-3f489e71d815",
+      "name": "Markdown",
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        1220,
+        360
+      ]
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "functions.webenclave.com",
+            "user-agent": "Insomnia/2023.5.5",
+            "content-length": "134",
+            "accept": "*/*",
+            "content-type": "application/json",
+            "x-forwarded-for": "71.82.67.90",
+            "x-forwarded-host": "functions.webenclave.com",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "87d60f505549",
+            "x-real-ip": "71.82.67.90",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "businessName": "wicked tacos",
+            "businessIdea": "wicked tacos is a taco shop in detroit michigan",
+            "businessId": "123"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set": {
+      "main": [
+        [
+          {
+            "node": "S3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S3": {
+      "main": [
+        [
+          {
+            "node": "Set1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown": {
+      "main": [
+        [
+          {
+            "node": "Set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "314704ac-15af-4472-b44b-35a9d7c49acb",
+  "id": "ZVrOD8X2QlwlUaXa",
+  "meta": {
+    "instanceId": "c6595d1af64558f387ff52f97fe4a36d0569860f61bd602d73a4fe44b9bdad45"
+  },
+  "tags": []
+}
