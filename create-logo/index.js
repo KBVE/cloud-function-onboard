@@ -61,7 +61,7 @@ module.exports = async (req, res) => {
                 created_at: (new Date(Date.now())).toISOString(),
                 created_by: user.email,
                 business_id: payload.businessId
-            }, 
+            },
             [
                 sdk.Permission.read(sdk.Role.user(user.$id))
             ]
